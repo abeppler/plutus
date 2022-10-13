@@ -4,19 +4,8 @@ namespace Plutus.WebAPI.Data
 {
     public class PlutusDbContext : DbContext
     {
-        protected readonly IConfiguration Configuration;
-
-        public PlutusDbContext(IConfiguration configuration)
+        public PlutusDbContext(DbContextOptions<PlutusDbContext> options): base(options)
         {
-            Configuration = configuration;
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-        {
-            if (!options.IsConfigured)
-            {
-                options.UseSqlServer(Configuration.GetConnectionString("PlutusDatabase"));
-            }
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

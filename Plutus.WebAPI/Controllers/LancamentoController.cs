@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Plutus.WebAPI.Data;
+using Plutus.WebAPI.Data.Entity;
 
 namespace Plutus.WebAPI.Controllers
 {
@@ -6,5 +9,19 @@ namespace Plutus.WebAPI.Controllers
     [Route("[controller]")]
     public class LancamentoController : ControllerBase
     {
+        private readonly PlutusDbContext _context;
+
+        public LancamentoController(PlutusDbContext context)
+        {
+            _context = context;
+        }
+
+
+        [HttpGet]
+        public IActionResult Get()
+        {
+            var lancamentos = _context.Set<Lancamento>().AsNoTracking();
+            return Ok(lancamentos);
+        }
     }
 }
