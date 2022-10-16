@@ -66,7 +66,7 @@ const Admin = (props) => {
 
   return (
     <>
-      <Sidebar
+      {/* <Sidebar
         {...props}
         routes={routes}
         logo={{
@@ -74,7 +74,7 @@ const Admin = (props) => {
           imgSrc: require("../assets/img/brand/argon-react.png"),
           imgAlt: "..."
         }}
-      />
+      /> */}
       <div className="main-content" ref={mainContent}>
         <AdminNavbar
           {...props}
@@ -84,9 +84,9 @@ const Admin = (props) => {
           {getRoutes(routes)}
           <Redirect from="*" to="/admin/index" />
         </Switch>
-        <Container fluid>
+        {/* <Container fluid>
           <AdminFooter />
-        </Container>
+        </Container> */}
       </div>
     </>
   );
