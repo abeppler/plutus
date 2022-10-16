@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Plutus.WebAPI.Data;
 using Plutus.WebAPI.Data.Entity;
+using Plutus.WebAPI.Extensions;
 
 namespace Plutus.WebAPI.Controllers
 {
@@ -20,8 +21,20 @@ namespace Plutus.WebAPI.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            var lancamentos = _context.Set<Lancamento>().AsNoTracking();
-            return Ok(lancamentos);
+            var query = from lancamentos in _context.Set<Lancamento>().AsNoTracking()
+                        join contas in _context.Set<Conta>().AsNoTracking() on lancamentos.ContaId equals contas.Id
+                        join grupoContas in _context.Set<GrupoConta>().AsNoTracking() on lancamentos.GrupoContaId equals grupoContas.Id
+                        select new
+                        {
+                            tipoLancamentoDescricao = lancamentos.TipoLancamento.GetDescription(),
+                            contaDescricao = contas.Descricao,
+                            grupoContaDescricao = grupoContas.Descricao,
+                            historico = lancamentos.Historico,
+                            dataFormatada = lancamentos.Data.ToString("dd/MM/yyyy"),
+                            valorFormatado = lancamentos.Valor.ToString("N2")
+                        };
+
+            return Ok(query);
         }
     }
 }

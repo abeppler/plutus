@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+import axios from "axios";
+
 // node.js library that concatenates classes (strings)
 import classnames from "classnames";
 // javascipt plugin for creating charts
@@ -18,7 +21,7 @@ import {
   Table,
   Container,
   Row,
-  Col
+  Col,
 } from "reactstrap";
 
 // core components
@@ -26,7 +29,7 @@ import {
   chartOptions,
   parseOptions,
   chartExample1,
-  chartExample2
+  chartExample2,
 } from "variables/charts.js";
 
 import Header from "components/Headers/Header.js";
@@ -34,6 +37,14 @@ import Header from "components/Headers/Header.js";
 const Index = (props) => {
   const [activeNav, setActiveNav] = useState(1);
   const [chartExample1Data, setChartExample1Data] = useState("data1");
+
+  const [lancamentos, setLancamentos] = useState([]);
+
+  useEffect(() => {
+    axios.get("https://localhost:7207/Lancamento").then((response) => {
+      setLancamentos(response.data);
+    });
+  }, []);
 
   if (window.Chart) {
     parseOptions(Chart, chartOptions());
@@ -44,11 +55,21 @@ const Index = (props) => {
     setActiveNav(index);
     setChartExample1Data("data" + index);
   };
+
+  const tableConfig = [
+    { name: "Tipo", colValue: "tipoLancamentoDescricao" },
+    { name: "Conta", colValue: "contaDescricao" },
+    { name: "Grupo Conta", colValue: "grupoContaDescricao" },
+    { name: "Histórico", colValue: "historico" },
+    { name: "Data", colValue: "dataFormatada" },
+    { name: "Valor", colValue: "valorFormatado" },
+  ];
+
   return (
     <>
       <Header />
       {/* Page content */}
-      <Container className="mt--7" fluid>        
+      <Container className="mt--7" fluid>
         <Row className="mt-5">
           <Col className="mb-12 mb-xl-0" xl="12">
             <Card className="shadow">
@@ -71,35 +92,17 @@ const Index = (props) => {
               <Table className="align-items-center table-flush" responsive>
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col">Tipo</th>
-                    <th scope="col">Conta</th>
-                    <th scope="col">Grupo Conta</th>
-                    <th scope="col">Histórico</th>
-                    <th scope="col">Data</th>
-                    <th scope="col">Valor</th>
+                    {tableConfig.map((col) => <th key={col.name} scope="col">{col.name}</th>)}
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <th>Despesa</th>
-                    <td>Nubank Anderson</td>
-                    <td>Streamings</td>
-                    <td>Netflix</td>
-                    <td>06/10/2022</td>
-                    <td>R$ 55,90</td>
-                  </tr>
-                  <tr>
-                    <th>Despesa</th>
-                    <td>Nubank Anderson</td>
-                    <td>Streamings</td>
-                    <td>Amazon</td>
-                    <td>06/10/2022</td>
-                    <td>R$ 10,00</td>
-                  </tr>                  
+                  {lancamentos.map((rowValue) => <tr key={rowValue.id}>
+                    {tableConfig.map((col) => <td key={col.name} scope="col">{rowValue[col.colValue]}</td>)}
+                  </tr>)}                  
                 </tbody>
               </Table>
             </Card>
-          </Col>          
+          </Col>
         </Row>
       </Container>
     </>
