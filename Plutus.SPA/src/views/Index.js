@@ -22,6 +22,10 @@ import {
   Container,
   Row,
   Col,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from "reactstrap";
 
 // core components
@@ -39,6 +43,7 @@ const Index = (props) => {
   const [chartExample1Data, setChartExample1Data] = useState("data1");
 
   const [lancamentos, setLancamentos] = useState([]);
+  const [modalAtivo, setModalAtivo] = useState(false);
 
   useEffect(() => {
     axios.get("https://localhost:7207/Lancamento").then((response) => {
@@ -56,6 +61,10 @@ const Index = (props) => {
     setChartExample1Data("data" + index);
   };
 
+  const toggleModal = () => {
+    setModalAtivo(!modalAtivo);
+  }
+
   const tableConfig = [
     { name: "Tipo", colValue: "tipoLancamentoDescricao" },
     { name: "Conta", colValue: "contaDescricao" },
@@ -68,6 +77,29 @@ const Index = (props) => {
   return (
     <>
       <Header />
+      <Modal
+        isOpen={modalAtivo}
+        toggle={toggleModal}
+      >
+        <ModalHeader toggle={toggleModal}>Novo Lançamento</ModalHeader>
+        <ModalBody>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+          aliquip ex ea commodo consequat. Duis aute irure dolor in
+          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+          culpa qui officia deserunt mollit anim id est laborum.
+        </ModalBody>
+        <ModalFooter>
+          <Button color="primary" onClick={toggleModal}>
+            Do Something
+          </Button>{" "}
+          <Button color="secondary" onClick={toggleModal}>
+            Cancel
+          </Button>
+        </ModalFooter>
+      </Modal>
       {/* Page content */}
       <Container className="mt--7" fluid>
         <Row className="mt-5">
@@ -81,7 +113,7 @@ const Index = (props) => {
                   <div className="col text-right">
                     <Button
                       color="primary"
-                      onClick={(e) => e.preventDefault()}
+                      onClick={toggleModal}
                       size="sm"
                     >
                       Novo
@@ -92,13 +124,23 @@ const Index = (props) => {
               <Table className="align-items-center table-flush" responsive>
                 <thead className="thead-light">
                   <tr>
-                    {tableConfig.map((col) => <th key={col.name} scope="col">{col.name}</th>)}
+                    {tableConfig.map((col) => (
+                      <th key={col.name} scope="col">
+                        {col.name}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {lancamentos.map((rowValue) => <tr key={rowValue.id}>
-                    {tableConfig.map((col) => <td key={col.name} scope="col">{rowValue[col.colValue]}</td>)}
-                  </tr>)}                  
+                  {lancamentos.map((rowValue) => (
+                    <tr key={rowValue.id}>
+                      {tableConfig.map((col) => (
+                        <td key={col.name} scope="col">
+                          {rowValue[col.colValue]}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
                 </tbody>
               </Table>
             </Card>
